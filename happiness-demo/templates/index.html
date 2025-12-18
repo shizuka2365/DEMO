@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸福积分体系 · 四维框架在线演示</title>
+    <style>
+        body { margin:0; font-family:"Microsoft YaHei",Arial,sans-serif; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; min-height:100vh; }
+        .container { max-width:1200px; margin:0 auto; padding:20px; }
+        header { text-align:center; padding:50px 20px; }
+        h1 { font-size:3em; margin:0; text-shadow:0 4px 15px rgba(0,0,0,0.4); }
+        .subtitle { font-size:1.5em; margin-top:15px; opacity:0.9; }
+        .date { font-size:1.2em; margin-top:10px; color:#ffd700; }
+        .controls { text-align:center; margin:30px 0; }
+        button { padding:14px 36px; margin:0 12px; font-size:1.2em; border:none; border-radius:50px; cursor:pointer; transition:0.3s; }
+        .btn-primary { background:#fff; color:#667eea; font-weight:bold; }
+        .btn-primary:hover { transform:scale(1.08); box-shadow:0 10px 20px rgba(0,0,0,0.3); }
+        .btn-auto { background:rgba(255,255,255,0.2); color:white; border:2px solid white; }
+        .main { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:25px; margin-top:40px; }
+        .card { background:rgba(255,255,255,0.95); color:#333; border-radius:20px; box-shadow:0 15px 35px rgba(0,0,0,0.3); overflow:hidden; }
+        .card-header { padding:25px; text-align:center; color:white; font-size:1.6em; font-weight:bold; }
+        .trust { background:linear-gradient(45deg,#4facfe,#00f2fe); }
+        .behavior { background:linear-gradient(45deg,#43e97b,#38f9d7); }
+        .rhythm { background:linear-gradient(45deg,#fa709a,#fee140); }
+        .risk { background:linear-gradient(45deg,#ff9a9e,#fad0c4); }
+        .card-body { padding:30px; }
+        .metrics { display:flex; flex-wrap:wrap; gap:20px; margin-top:25px; }
+        .metric { flex:1; min-width:140px; text-align:center; background:#f0f4f8; padding:15px; border-radius:12px; }
+        .metric-label { font-size:1em; color:#666; }
+        .metric-value { font-size:2.2em; font-weight:bold; margin:10px 0; color:#333; }
+        .status-bar { height:14px; background:#ddd; border-radius:7px; overflow:hidden; }
+        .status-fill { height:100%; border-radius:7px; transition:width 1.8s ease; }
+        footer { text-align:center; padding:50px; opacity:0.8; font-size:1.1em; }
+        .highlight { animation:pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:0.8} 50%{opacity:1} }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>幸福积分体系</h1>
+            <p class="subtitle">国家长者福利试点项目 · 四维框架实时演示</p>
+            <p class="date" id="real_date">加载中...</p>
+        </header>
+
+        <div class="controls">
+            <button class="btn-primary" onclick="advanceDay()">推进一天</button>
+            <button class="btn-auto highlight" id="autoBtn" onclick="toggleAuto()">自动播放</button>
+            <button class="btn-primary" onclick="resetSim()">重新开始</button>
+            <p style="margin-top:20px; font-size:1.3em;">
+                项目运行第 <span id="day">1</span> 天 · 当前阶段：<strong id="phase">启动期</strong>
+            </p>
+        </div>
+
+        <div class="main">
+            <div class="card">
+                <div class="card-header trust">信任构建引擎</div>
+                <div class="card-body">
+                    <p>多维度构建用户信任，已接入国家系统记录</p>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-label">平均信任分</div>
+                            <div class="metric-value" id="avg_trust">45.0</div>
+                            <div class="status-bar"><div class="status-fill trust-fill" id="trust_bar" style="width:45%"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header behavior">行为驱动引擎</div>
+                <div class="card-body">
+                    <p>今日活跃用户：<span id="active_users">0</span>/5</p>
+                    <p>今日发放幸福值：<strong id="points_today">0</strong></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header rhythm">节奏控制引擎</div>
+                <div class="card-body">
+                    <p>当前项目阶段：<strong id="phase2">启动期</strong></p>
+                    <p>累计发放幸福值：<strong id="total_points">0</strong></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header risk">风险缓冲引擎</div>
+                <div class="card-body">
+                    <p>风险事件次数：<span id="risk_events">0</span></p>
+                    <p style="color:#27ae60; font-weight:bold;">系统运行稳定 · 福利正常释放</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:40px;">
+            <div class="card-header" style="background:linear-gradient(45deg,#667eea,#764ba2);">用户状态快照（前3位）</div>
+            <div class="card-body">
+                <div id="user_list">加载中...</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>幸福积分体系 © 2025 · 所有贡献已记录至国家系统</p>
+            <p>房产抽奖火热进行中 · 生活补贴持续释放中</p>
+        </footer>
+    </div>
+
+    <script>
+        let autoInterval = null;
+
+        function updateData() {
+            fetch('/api/status')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('real_date').textContent = data.current_date;
+                    document.getElementById('day').textContent = data.day;
+                    document.getElementById('phase').textContent = data.phase;
+                    document.getElementById('phase2').textContent = data.phase;
+                    document.getElementById('active_users').textContent = data.active_users;
+                    document.getElementById('points_today').textContent = data.points_today.toLocaleString();
+                    document.getElementById('total_points').textContent = data.total_points.toLocaleString();
+                    document.getElementById('avg_trust').textContent = data.avg_trust;
+                    document.getElementById('trust_bar').style.width = data.avg_trust + '%';
+                    document.getElementById('risk_events').textContent = data.risk_events;
+
+                    const userList = document.getElementById('user_list');
+                    userList.innerHTML = data.users.map(u => `
+                        <div style="margin:15px 0; padding:15px; background:#f8f9fa; border-radius:12px; border-left:5px solid #667eea;">
+                            <strong>${u.name}</strong>（${u.type === 'early_adopter' ? '早期用户' : u.type === 'follower' ? '跟随者' : '怀疑者'}）<br>
+                            等级：${u.tier} | 幸福值：${u.points.toLocaleString()} | 信任：${u.trust.toFixed(1)} | 团队：${u.team}人
+                        </div>
+                    `).join('');
+
+                    if (data.is_end) {
+                        clearInterval(autoInterval);
+                        document.getElementById('autoBtn').textContent = "演示已结束";
+                        document.getElementById('autoBtn').disabled = true;
+                    }
+                });
+        }
+
+        function advanceDay() { fetch('/api/advance').then(updateData); }
+        function resetSim() { fetch('/api/reset').then(() => { updateData(); toggleAuto(false); }); }
+
+        function toggleAuto() {
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+                document.getElementById('autoBtn').textContent = "自动播放";
+            } else {
+                autoInterval = setInterval(advanceDay, 2200);
+                document.getElementById('autoBtn').textContent = "暂停播放";
+            }
+        }
+
+        updateData();
+        setInterval(updateData, 3000);
+    </script>
+</body>
+</html>
